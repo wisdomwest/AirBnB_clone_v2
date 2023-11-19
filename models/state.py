@@ -8,8 +8,9 @@ from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy import relationship
 
+
 class State(BaseModel, Base):
-    """"Represents city 
+    """"Represents city
     Attributes:
         __tablename__: The name of table states
         name: name of state
@@ -28,6 +29,3 @@ class State(BaseModel, Base):
                 if city.state.id == self.id:
                     cList.append(city)
             return cList
-                    
-                
-

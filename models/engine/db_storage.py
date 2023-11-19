@@ -21,10 +21,10 @@ class DBStorage:
         __engine: engine.
         __session: session.
     """
-    
+
     __engine = None
     __session = None
-    
+
     def __init__(self):
         """Initialize a DBStorage instance"""
         self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".
@@ -35,7 +35,7 @@ class DBStorage:
                                       pool_pre_ping=True)
         if getenv("HBNB_ENV") == "test":
             Base.metadata.drop_all(self.__engine)
-    
+
     def all(self, cls=None):
         """query on the current database session(self.__session)
         all objects depending of the class name (argument cls)
@@ -55,7 +55,7 @@ class DBStorage:
                 cls = eval(cls)
             obj.extend(self.__session.query(cls).all())
         return {"{}.{}".format(type(i).__name__, i.id): i for i in obj}
-        
+
     def new(self, obj):
         """Add object to the current database session"""
         self.__session.add(obj)
@@ -68,13 +68,11 @@ class DBStorage:
         """Delete object from the current database session"""
         if obj is not None:
             self.__session.delete(obj)
-            
+
     def reload(self):
         """create all tables in db and init"""
         Base.metadata.create_all(self.__engine)
         session_f = sessionmaker(bind=self.__engine,
-                               expire_on_commit=False)
+                                 expire_on_commit=False)
         Session = scoped_session(session_f)
         self.__session = Session()
-        
-        
