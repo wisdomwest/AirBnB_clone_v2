@@ -115,36 +115,42 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        try:
-            if not args:
-                raise SyntaxError()
+        args_list = args.split() # split argument into a list
 
-            arg_list = args.split(" ")
 
-            kwargs = {}
-            for i in range(1, len(arg_list)):
-                key, value = tuple(arg_list[i].split("="))
-                if value[0] == '"':
-                    value = value.strip('"').replace("_", " ")
-                else:
-                    try:
-                        value = eval(value)
-                    except (SyntaxError, NameError):
-                        continue
-                kwargs[key] = value
-            if not kwargs:
-                obj = eval(arg_list[0])()
-            else:
-                obj = eval(arg_list[0])(**kwargs)
-                storage.new(obj)
-
-            print(obj.id)
-            obj.save()
-
-        except SyntaxError:
+        if len(args_list) == 0:
             print("** class name missing **")
-        except NameError:
+            return
+
+        class_name = args_list[0]
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
+            return
+
+        # create a new instance
+        new_instance = HBNBCommand.classes[class_name]()
+
+        # iterate over remaining arguments to set attributes
+        for param in args_list[1:]:
+            key_value = param.split('=')
+            if len(key_value) == 2:
+                key, value = key_value
+                # Replace underscores with spaces and escape double quotes in strings
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1].replace('_', ' ').replace('\\"', '"')
+                # convert to the approprite type
+                try:
+                    if '.' in value: # checking for float
+                        value = float(value)
+                    else: # Fallback to integer
+                        value = int(value)
+                except ValueError:
+                    pass # in not a number, keep it as a string
+                setattr(new_instance, key, value)
+
+        new_instance.save()
+        print(new_instance.id)
+
 
     def help_create(self):
         """ Help information for the create method """
@@ -226,13 +232,11 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
-        else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all(HBNBCommand.classes[args]).items():
                 print_list.append(str(v))
-
+        else:
+            for k, v in storage.all().items():
+                print_list.append(str(v))
         print(print_list)
 
     def help_all(self):

@@ -43,18 +43,26 @@ class DBStorage:
         Return:
             Dict lasses in format <class name>.<obj id> = obj
         """
+        classes = {
+                'State': State, 'City': City, 'User': User,
+                'Place': Place, 'Review': Review, 'Amenity': Amenity,
+        }
+        objects = {}
+
         if cls is None:
-            obj = self.__session.query(State).all()
-            obj.extend(self.__session.query(City).all())
-            obj.extend(self.__session.query(User).all())
-            obj.extend(self.__session.query(Place).all())
-            obj.extend(self.__session.query(Review).all())
-            obj.extend(self.__session.query(Amenity).all())
-        else:
-            if type(cls) == str:
-                cls = eval(cls)
-            obj.extend(self.__session.query(cls).all())
-        return {"{}.{}".format(type(i).__name__, i.id): i for i in obj}
+            for class_name, class_type in classes.items():
+                query = self.__session.query(class_type)
+                for obj in query.all():
+                    obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+                    objects[obj_key] = obj
+        elif cls in classes:
+            query = self.__session.query(classes[cls])
+            for obj in query.all():
+                obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+                objects[obj_key] = obj
+
+        return objects
+
 
     def new(self, obj):
         """Add object to the current database session"""
