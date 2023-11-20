@@ -43,25 +43,23 @@ class DBStorage:
         Return:
             Dict lasses in format <class name>.<obj id> = obj
         """
-        classes = {
-                'State': State, 'City': City, 'User': User,
-                'Place': Place, 'Review': Review, 'Amenity': Amenity,
-        }
         objects = {}
 
-        if cls is None:
-            for class_name, class_type in classes.items():
-                query = self.__session.query(class_type)
-                for obj in query.all():
-                    obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
-                    objects[obj_key] = obj
-        elif cls in classes:
-            query = self.__session.query(classes[cls])
-            for obj in query.all():
-                obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
-                objects[obj_key] = obj
-
-        return objects
+        if cls:
+            if type(cls) is str:
+                cls = eval(cls)
+            query = self.__session.query(cls)
+            for elem in query:
+                key = "{}.{}".format(type(elem).__name__, elem.id)
+                objects[key] = elem
+        else:
+            lists  = [State, City, User, Place, Review, Amenity]
+            for obj in lists:
+                query = self.__session.query(obj)
+                for elem in query:
+                    key = "{}.{}".format(type(elem).__name__, elem.id)
+                    objects[key] = elem
+        return (objects)
 
 
     def new(self, obj):
