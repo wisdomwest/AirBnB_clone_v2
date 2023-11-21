@@ -1,13 +1,22 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from sqlalchemy.ext.declarative import declarative_base
+from os import getenv
+import models
+from models.review import Review
+from models.amenity import Amenity
 from models.base_model import BaseModel
 from models.base_model import Base
 from sqlalchemy import Column, Table, String, Integer, Float, ForeignKey
 from sqlalchemy.orm import relationship
-from os import getenv
-import models
-from models.review import Review
+
+
+association_table = Table("place_amenity", Base.metadata,
+                          Column("place_id", String(60),
+                                 ForeignKey("places.id"),
+                                 primary_key=True, nullable=False),
+                          Column("amenity_id", String(60),
+                                 ForeignKey("amenities.id"),
+                                 primary_key=True, nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -25,6 +34,8 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     reviews = relationship("Review", cascade='all, delete, delete-orphan',
                            backref="place")
+    amenities = relationship('Amenity', secondary='place_amenity',
+                             viewonly=False)
     amenity_ids = []
 
     if getenv("HBNB_TYPE_STORAGE", None) != "db":
@@ -36,3 +47,17 @@ class Place(BaseModel, Base):
                 if r.place_id == self.id:
                     rList.append(r)
             return rList
+        
+        @property
+        def amenities(self):
+            """all Amenity.id linked to the Place"""
+            aList = []
+            for a in list(models.storage.all(Amenity).values()):
+                if a.id in self.amenity_ids:
+                    aList.append(a)
+            return aList
+        
+        @amenities.setter
+        def amenities(self, data):
+            if type(data) == Amenity:
+                self.amenity_ids.append(data.id)
