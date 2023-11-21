@@ -53,14 +53,13 @@ class DBStorage:
                 key = "{}.{}".format(type(elem).__name__, elem.id)
                 objects[key] = elem
         else:
-            lists  = [State, City, User, Place, Review, Amenity]
+            lists = [State, City, User, Place, Review, Amenity]
             for obj in lists:
                 query = self.__session.query(obj)
                 for elem in query:
                     key = "{}.{}".format(type(elem).__name__, elem.id)
                     objects[key] = elem
         return (objects)
-
 
     def new(self, obj):
         """Add object to the current database session"""

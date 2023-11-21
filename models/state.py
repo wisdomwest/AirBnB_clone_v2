@@ -24,7 +24,8 @@ class State(BaseModel, Base):
         @property
         def cities(self):
             """
-            Getter attribute that returns the list of City instances with state_id equals
+            Getter attribute that returns the list of City instances with stat
+            _id equals
             to the current State.id for FileStorage.
             """
             from models import storage

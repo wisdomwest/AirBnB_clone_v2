@@ -23,10 +23,10 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
-    reviews = relationship("Review", cascade='all, delete, delete-orphan', 
-                          backref="place")
+    reviews = relationship("Review", cascade='all, delete, delete-orphan',
+                           backref="place")
     amenity_ids = []
-    
+
     if getenv("HBNB_TYPE_STORAGE", None) != "db":
         @property
         def reviews(self):
