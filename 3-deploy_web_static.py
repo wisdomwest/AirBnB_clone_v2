@@ -49,10 +49,10 @@ def do_deploy(archive_path):
     except Exception as e:
         return False
 
+
 def deploy():
     """combine all this together"""
     path = do_pack()
-    try:
-        return do_deploy(path)
-    except Exception as e:
+    if path is None:
         return False
+    return do_deploy(path)
