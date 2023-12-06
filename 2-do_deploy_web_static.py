@@ -30,14 +30,18 @@ def do_deploy(file_path):
     name = path.split(".")[0]
     try:
         put(file_path, "/tmp/{}".format(path))
+        run("mkdir -p /data/web_static/releases/{}/".
+           format(name))
         run("tar -xzf /tmp/{} -C /data/web_static/releases/{}/".
             format(path, name))
         run("rm /tmp/{}".format(path))
+        run("mv /data/web_static/releases/{}/web_static/* "
+           "/data/web_static/releases/{}/".format(name, name))
+        run("rm -rf /data/web_static/releases/{}/web_static".
+           format(name))
         run("rm -rf /data/web_static/current")
-        run(
-            "ln -s /data/web_static/releases/{}/ "
-            "/data/web_static/current"
-        ).format(name)
+        run("ln -s /data/web_static/releases/{}/ "
+           "/data/web_static/current".format(name))
         return True
     except Exception as e:
         return False
