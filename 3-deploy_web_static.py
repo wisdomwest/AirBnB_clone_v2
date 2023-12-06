@@ -55,4 +55,5 @@ def deploy():
     path = do_pack()
     if path is None:
         return False
-    return do_deploy(path)
+    x = do_deploy(path)
+    return x
