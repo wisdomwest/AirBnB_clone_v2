@@ -52,8 +52,7 @@ def do_deploy(archive_path):
 
 def deploy():
     """combine all this together"""
-    path = do_pack()
+    archive_path = do_pack()
     if path is None:
         return False
-    x = do_deploy(path)
-    return x
+    return do_deploy(archive_path)
