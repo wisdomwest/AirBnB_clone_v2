@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#using fabric to generate a tgz file
+# using fabric to generate a tgz file
 
 import os.path
 from datetime import datetime
