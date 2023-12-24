@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Create a web application display 'Hello HBNB!'"""
+"""Create a web application display Hello HBNB!"""
 from flask import Flask
 
 app = Flask(__name__)
