@@ -12,6 +12,14 @@ def states():
     return render_template('9-states.html', data=data)
 
 
+@app.route("/states/<id>", strict_slashes=False)
+def states_id(id=None):
+    data = storage.all("State").values()
+    for data in data:
+        if data.id == id:
+            return render_template("9-states.html", data=data)
+    return render_template("9-states.html")
+
 @app.teardown_appcontext
 def close_storage(exception):
     storage.close()
